@@ -1,7 +1,7 @@
 from datetime import date, timedelta
-from calendar import Calendar as cal
 from bummyjab.budget import Budget
 import os.path as path
+from os import makedirs
 import yaml
 
 
@@ -12,16 +12,18 @@ class Calendar:
         self.current_month = date.today().month
         self.current_year = date.today().year
         self.storage_dir = storage_dir
-        self.cal = cal()
 
     def create_budget_files(self):
         """ Creates budget files for current_day + year
 
         """
         def save(day):
-            _fname = "{}-budget.yaml".format(day)
-            _save_path = path.join(self.storage_dir, _fname)
+            _save_path = path.join(self.storage_dir, str(day.year),
+                                   str(day.month),
+                                   str(day.day), 'budget.yaml')
             if not path.exists(_save_path):
+                if not path.exists(path.dirname(_save_path)):
+                    makedirs(path.dirname(_save_path))
                 with open(_save_path, 'w') as f:
                     yaml_out = dict(timestamp=day)
                     f.write(yaml.safe_dump(yaml_out, default_flow_style=False))
@@ -35,9 +37,12 @@ class Calendar:
     def load_today(self):
         """ loads today's budget
         """
-        today_budget_file = "{}-budget.yaml".format(date.today())
-        today_budget_path = path.join(self.storage_dir, today_budget_file)
-        if path.exists(today_budget_path):
-            return Budget(today_budget_path)
+        today_budget_file = path.join(self.storage_dir,
+                                      str(self.current_year),
+                                      str(self.current_month),
+                                      str(self.current_day),
+                                      'budget.yaml')
+        if path.exists(today_budget_file):
+            return Budget(today_budget_file)
         else:
             raise Exception('Couldnt load budget for {}'.format(date.today()))

@@ -18,7 +18,9 @@ class Budget:
 
     def daily_spend(self):
         """ returns daily spend amount """
-        if 'deductions' not in self._budget:
+        if 'daily_spend' not in self._budget:
+            return 0
+        elif 'deductions' not in self._budget:
             return self._budget['daily_spend']
         else:
             # Add up dedications to reflect daily_spend
@@ -28,6 +30,8 @@ class Budget:
             return self._budget['daily_spend'] - _deduction_amount
 
     def monthly_spend(self):
+        if 'monthly_spend' not in self._budget:
+            return 0
         return self._budget['monthly_spend']
 
     def add_deduction(self, key, amount):

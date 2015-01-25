@@ -1,0 +1,5 @@
+PyYAML
+mock
+nose
+nose-cov
+setuptools
